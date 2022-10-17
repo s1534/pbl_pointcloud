@@ -7,7 +7,18 @@
 
 # First import the library
 import pyrealsense2 as rs
+from datetime import datetime
+from pytz import timezone
+import os
 
+def my_makedirs(path):
+    if not os.path.isdir(path):
+        os.makedirs(path)
+
+
+utc_now = datetime.now(timezone('UTC'))
+jst_now = utc_now.astimezone(timezone('Asia/Tokyo'))
+ts = jst_now.strftime("%Y%m%d-%H%M%S")
 
 # Declare pointcloud object, for calculating pointclouds and texture mappings
 pc = rs.pointcloud()
@@ -27,22 +38,28 @@ pipe.start(config)
 # (alternatively, texture can be obtained from color or infrared stream)
 colorizer = rs.colorizer()
 
-try:
+while 1:
     # Wait for the next set of frames from the camera
     frames = pipe.wait_for_frames()
     colorized = colorizer.process(frames)
 
+    utc_now = datetime.now(timezone('UTC'))
+    jst_now = utc_now.astimezone(timezone('Asia/Tokyo'))
+    ts = jst_now.strftime("%Y%m%d-%H%M%S")
+    date = ts[:8]
+
+    # ディレクトリが無いときは作成する
+    my_makedirs("data/"+date)
     # Create save_to_ply object
-    ply = rs.save_to_ply("1.ply")
+    ply = rs.save_to_ply("data/"+date+"/"+ts+".ply")
 
     # Set options to the desired values
     # In this example we'll generate a textual PLY with normals (mesh is already created by default)
-    ply.set_option(rs.save_to_ply.option_ply_binary, False)
+    ply.set_option(rs.save_to_ply.option_ply_binary, True)
     ply.set_option(rs.save_to_ply.option_ply_normals, True)
 
-    print("Saving to 1.ply...")
+    print("Saving to"+ ts + "ply...")
     # Apply the processing block to the frameset which contains the depth frame and the texture
     ply.process(colorized)
     print("Done")
-finally:
-    pipe.stop()
+    
