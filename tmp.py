@@ -71,6 +71,8 @@ try:
 
         # Generate the pointcloud and texture mappings
         rgbd = open3d.geometry.RGBDImage.create_from_color_and_depth(color, depth, convert_rgb_to_intensity = False)
+        print(rgbd)
+
         pcd =  open3d.geometry.PointCloud.create_from_rgbd_image(rgbd, pinhole_camera_intrinsic)
 
         # Render images

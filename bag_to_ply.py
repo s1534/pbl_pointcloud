@@ -5,12 +5,13 @@ import glob
 import os
 import argparse
 import open3d
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--visualize', action='store_true')
 args = parser.parse_args() 
 
-bagfiles = glob.glob('bag_data/20221017_234132.bag')
+bagfiles = glob.glob('bag_data/20221018_014009.bag')
 num_bags = len(bagfiles)
 
 for progress, bagfile in enumerate(bagfiles):
@@ -38,12 +39,14 @@ for progress, bagfile in enumerate(bagfiles):
 
     print('{}/{}: '.format(progress+1, num_bags),bagfile, "size:",size, "frame_rate:",frame_rate)
 
-
+    intr = profile.get_stream(rs.stream.color).as_video_stream_profile().get_intrinsics()
+    pinhole_camera_intrinsic = open3d.camera.PinholeCameraIntrinsic(intr.width, intr.height, intr.fx, intr.fy, intr.ppx, intr.ppy)
     # Create an align object
     # rs.align allows us to perform alignment of depth frames to others frames
     # The "align_to" is the stream type to which we plan to align depth frames.
     align_to = rs.stream.color
     align = rs.align(align_to)
+
 
     try:
         cur = -1
@@ -74,7 +77,17 @@ for progress, bagfile in enumerate(bagfiles):
 
             # Generate the pointcloud and texture mappings
             rgbd = open3d.geometry.RGBDImage.create_from_color_and_depth(color, depth, convert_rgb_to_intensity = False)
-            pcd = open3d.geometry.PointCloud.create_from_rgbd_image(rgbd, open3d.camera.PinholeCameraIntrinsic)
+            print(rgbd)
+
+            pcd = open3d.geometry.PointCloud.create_from_rgbd_image(rgbd, pinhole_camera_intrinsic)
+
+            plt.subplot(1, 2, 1)
+            plt.title('Redwood grayscale image')
+            plt.imshow(rgbd.color)
+            plt.subplot(1, 2, 2)
+            plt.title('Redwood depth image')
+            plt.imshow(rgbd.depth)
+            plt.show()
 
             # Render images
             depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03), cv2.COLORMAP_JET)
