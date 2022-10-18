@@ -59,7 +59,6 @@ try:
 
         color_image = np.asanyarray(color_frame.get_data())
         color = open3d.geometry.Image(color_image)
-
         depth_image = np.asanyarray(depth_frame.get_data())
         depth_image = (depth_image < clipping_distance) * depth_image
         depth = open3d.geometry.Image(depth_image)
@@ -72,7 +71,6 @@ try:
         # Generate the pointcloud and texture mappings
         rgbd = open3d.geometry.RGBDImage.create_from_color_and_depth(color, depth, convert_rgb_to_intensity = False)
         print(rgbd)
-
         pcd =  open3d.geometry.PointCloud.create_from_rgbd_image(rgbd, pinhole_camera_intrinsic)
 
         # Render images

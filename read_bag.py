@@ -1,10 +1,17 @@
-import open3d as o3d
-bag_reader = o3d.t.io.RSBagReader()
-bag_reader.open('20221012_010032.bag')
-im_rgbd = bag_reader.next_frame()
-while not bag_reader.is_eof():
-    # process im_rgbd.depth and im_rgbd.color
-    im_rgbd = bag_reader.next_frame()
-    print(im_rgbd)
+#必要なパッケージのインポート
+import bagpy 
+import glob
+import sys
+import rosbag
 
-bag_reader.close()
+
+csvfiles =[]
+#ファイル検索
+bag_filename = rosbag.Bag("d435data.bag")
+print(bag_filename)
+# for t in bag_filename.read_messages():
+#     print(t)
+
+# for t in b.topics:
+#     data = b.message_by_topic(t)
+#     csvfiles.append(data) 
