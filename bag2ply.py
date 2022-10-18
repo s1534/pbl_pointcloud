@@ -7,7 +7,6 @@ import os
 from pytz import timezone
 import matplotlib.pyplot as plt
 
-
 def my_makedirs(path):
     if not os.path.isdir(path):
         os.makedirs(path)
@@ -17,8 +16,8 @@ config = rs.config()
 
 # ↓ ここでファイル名設定
 config.enable_device_from_file('d435data.bag')
-config.enable_stream(rs.stream.depth, 1024, 768, rs.format.z16, 30)
-config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
+# config.enable_stream(rs.stream.depth, 1024, 768, rs.format.z16, 30)
+# config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
 
 # ストリーミング開始
 pipeline = rs.pipeline()
