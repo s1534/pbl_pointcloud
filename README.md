@@ -1,2 +1,6 @@
 # pbl_pointcloud
-pbl用のリポジトリ
+点群pbl用のリポジトリ
+
+# Usage
+bag2mp4.py
+
