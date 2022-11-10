@@ -6,7 +6,6 @@ import time
 config = rs.config()
 config.enable_stream(rs.stream.depth, 1024, 768, rs.format.z16, 30)
 config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
-# config.enable_stream(rs.stream.infrared, 640, 480, rs.format.y8, 30)
 
 config.enable_record_to_file('d435data.bag')
 # Start streaming
@@ -15,6 +14,7 @@ profile = pipeline.start(config)
 start = time.time()
 frame_no = 1
 
+# 最短距離を変更
 depth_sensor = profile.get_device().first_depth_sensor()
 laser_pwr = depth_sensor.get_option(rs.option.laser_power)
 set_laser = 10

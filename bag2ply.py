@@ -15,7 +15,7 @@ def my_makedirs(path):
 config = rs.config()
 
 # ↓ ここでファイル名設定
-config.enable_device_from_file('d435data.bag')
+config.enable_device_from_file('tmp.bag')
 # config.enable_stream(rs.stream.depth, 1024, 768, rs.format.z16, 30)
 # config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
 
@@ -46,7 +46,7 @@ try:
         color_image = np.asanyarray(color_frame.get_data())
 
         color_image = np.asanyarray(color_frame.get_data())
-        color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
+        # color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
 
         color = open3d.geometry.Image(color_image)
         depth_image = np.asanyarray(depth_frame.get_data())
