@@ -2,3 +2,6 @@ data/
 bag_data/
 *.bag
 *.mp4
+*.ply
+*.txt
+*.obj

@@ -12,7 +12,7 @@ def my_makedirs(path):
         os.makedirs(path)
 
 config = rs.config()
-bag_filename = 'D:/pointcloud/eating1.bag'
+bag_filename = 'D:/pointcloud/20221110/eating1.bag'
 
 # ↓ ここでファイル名設定
 config.enable_device_from_file(bag_filename)
