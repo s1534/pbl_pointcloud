@@ -29,6 +29,7 @@ align = rs.align(align_to)
 
 try:
     num = 0
+    count =1
     while True:
         # フレーム待ち(Color & Depth)
         frames = pipeline.wait_for_frames()
@@ -60,7 +61,10 @@ try:
         my_makedirs("data/"+date)
         
         # open3d.io.write_point_cloud("data/"+date+"/"+ts+".ply", pcd)
-        open3d.io.write_point_cloud("data/"+date+"/"+str(num)+".ply", pcd)
+        if num %15 == 0:
+            open3d.io.write_point_cloud("data/"+date+"/data"+str(count)+".ply", pcd)
+            count+=1
+
         num+=1
 
         # Show images
@@ -86,7 +90,7 @@ try:
         plt.imshow(color_image)
         # plt.show()
 
-        if num == 10:
+        if num == 301:
             break
 
 finally:

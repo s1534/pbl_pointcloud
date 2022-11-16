@@ -5,11 +5,15 @@ import glob
 import os
 import argparse
 
+# https://teratail.com/questions/218884　参照
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--visualize', action='store_true')
 args = parser.parse_args() 
 
-bagfiles = glob.glob('tmp.bag')
+bag_filename = 'D:/pointcloud/20221110/eating1.bag'
+
+bagfiles = glob.glob(bag_filename)
 num_bags = len(bagfiles)
 print(num_bags)
 for progress, bagfile in enumerate(bagfiles):
@@ -40,16 +44,36 @@ for progress, bagfile in enumerate(bagfiles):
 
     print('{}/{}: '.format(progress+1, num_bags),bagfile, size, frame_rate)
 
+    # Alignオブジェクト生成
+    align_to = rs.stream.color
+    align = rs.align(align_to)
+
     try:
         cur = -1
         while True:
             frames = pipeline.wait_for_frames()
 
-            color_frame = frames.get_color_frame()
-            depth_frame = frames.get_depth_frame()
-            color_image = np.asanyarray(color_frame.get_data())    
-            depth_image = np.asanyarray(depth_frame.get_data())    
+            aligned_frames = align.process(frames)
+            color_frame = aligned_frames.get_color_frame()
+            depth_frame = aligned_frames.get_depth_frame()
+            if not depth_frame or not color_frame:
+                continue
+
+            # color_frame = frames.get_color_frame()
+            # depth_frame = frames.get_depth_frame()
+            # color_image = np.asanyarray(color_frame.get_data())
+            # depth_image = np.asanyarray(depth_frame.get_data())
+            # 距離情報をカラースケール画像に変換する
+            depth_color_frame = rs.colorizer().colorize(depth_frame)
+            depth_image = np.asanyarray(depth_color_frame.get_data())
+
+            # RGB画像
+            color_image = np.asanyarray(color_frame.get_data())
             color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
+            
+            # images = np.hstack((depth_image, color_image))
+            # cv2.imshow('Frames', images)
+             
             # 描画
             writer_color.write(color_image)
             writer_depth.write(depth_image)
