@@ -5,3 +5,4 @@ bag_data/
 *.ply
 *.txt
 *.obj
+*.pth
