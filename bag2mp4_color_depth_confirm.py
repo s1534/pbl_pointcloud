@@ -4,6 +4,7 @@ import cv2
 import glob
 import os
 import argparse
+from tqdm import tqdm
 
 # https://teratail.com/questions/218884　参照
 
@@ -15,6 +16,7 @@ bag_filename = 'D:/pointcloud/20221110/eating1.bag'
 
 bagfiles = glob.glob(bag_filename)
 num_bags = len(bagfiles)
+print(bagfiles)
 print(num_bags)
 for progress, bagfile in enumerate(bagfiles):
     color_mp4file = os.path.basename(bagfile).split('.')[0]+'_color'+'.mp4'
@@ -50,6 +52,7 @@ for progress, bagfile in enumerate(bagfiles):
 
     try:
         cur = -1
+
         while True:
             frames = pipeline.wait_for_frames()
 
@@ -73,7 +76,7 @@ for progress, bagfile in enumerate(bagfiles):
             
             # images = np.hstack((depth_image, color_image))
             # cv2.imshow('Frames', images)
-             
+            
             # 描画
             writer_color.write(color_image)
             writer_depth.write(depth_image)
@@ -92,6 +95,7 @@ for progress, bagfile in enumerate(bagfiles):
     finally:
         print(color_image.shape)
         print(depth_image.shape)
+        print("書き出し完了")
         pipeline.stop()
         writer_color.release()
         writer_depth.release()

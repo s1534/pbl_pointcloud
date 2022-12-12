@@ -1,6 +1,9 @@
 import json
 import open3d as o3d
 import keyboard
+
+# open3d使って，カラー動画とデプス動画をbag形式で保存する
+
 config_filename = 'config.json'
 with open(config_filename) as cf:
     rs_cfg = o3d.t.io.RealSenseSensorConfig(json.load(cf))

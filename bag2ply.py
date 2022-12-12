@@ -7,6 +7,8 @@ import os
 from pytz import timezone
 import matplotlib.pyplot as plt
 
+# bagファイルを1フレームごとにplyとして出力する
+
 def my_makedirs(path):
     if not os.path.isdir(path):
         os.makedirs(path)
