@@ -1,9 +1,12 @@
 import cv2
-import sys
+import numpy as np
+import PySimpleGUI as sg
 
-camera_id = 0
-delay = 1
-window_name = 'frame'
+layout = [[sg.Text('名前は？'), sg.Input(key='-NAME-')],
+          [sg.Text('', key='-ACT-')],
+          [sg.Button('決定'), sg.Button('終了')]]
+
+window = sg.Window('sample', layout)
 
 
 filepath = "eating1_color.mp4"
@@ -11,32 +14,44 @@ filepath = "eating1_color.mp4"
 # 動画の読み込み
 cap = cv2.VideoCapture(filepath)
 
-if not cap.isOpened():
-    sys.exit()
+# 200フレーム目から取得
+# cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
-tm = cv2.TickMeter()
-tm.start()
+flag = 0
 
-count = 0
-max_count = 10
-fps = 0
 
-while cap.isOpened():
+# 動画終了まで繰り返し
+while(True):
+    event, values = window.read()
+
+    if event == sg.WIN_CLOSED or event == '終了':
+        break
+    if event == '決定':
+        window['-ACT-'].update(f'成功！ あなたの名前は{values["-NAME-"]}さんですね')
+
+    # フレームを取得
     ret, frame = cap.read()
 
-    if count == max_count:
-        tm.stop()
-        fps = max_count / tm.getTimeSec()
-        tm.reset()
-        tm.start()
-        count = 0
+    if ret is True:
+        imgbytes = cv2.imencode('.png', frame)[1].tobytes()
+        window['image'].update(data=imgbytes)
 
-    cv2.putText(frame, 'FPS: {:.2f}'.format(fps),
-                (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), thickness=2)
-    cv2.imshow(window_name, frame)
-    count += 1
+    # フレームを表示
+    cv2.imshow("Frame", frame)
+    if(flag % 10 == 0):
+        print(flag)
+    flag += 1
 
-    if cv2.waitKey(delay) & 0xFF == ord('q'):
+
+
+    # qキーが押されたら途中終了
+    if cv2.waitKey(30) & 0xFF == ord('q'):
         break
 
-cv2.destroyWindow(window_name)
+window.close()
+cap.release()
+cv2.destroyAllWindows()
+
+print(flag)
+print(f'eventは{event}')
+print(f'valuesは{values}')
