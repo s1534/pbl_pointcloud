@@ -3,8 +3,9 @@ import numpy as np
 import csv
 import pandas as pd
 
-def save_file():
-    return 1
+def save_csv(data):
+    data.to_csv('anotation.csv')
+    print("csvに出力完了")
 
 filepath = "eating1_color.mp4"
 
@@ -55,15 +56,10 @@ while(cap.isOpened()):
     cv2.imshow("Frame", frame)
 
     # qキーが押されたら途中終了
-    key = cv2.waitKey(70) & 0xff
+    key = cv2.waitKey(120) & 0xff
     if key == ord('q'):
+        save_csv(df)
         break
-
-    # 現在のフレーム番号を取得
-    # curpos = int(cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES))
-
-    # トラックバーにセットする（コールバック関数が呼ばれる）
-    cv2.setTrackbarPos('temp', 'aiueo', fps)
 
     # 開始フレームを選択
     if key == ord('s'):
@@ -80,14 +76,13 @@ while(cap.isOpened()):
 
     # アノテーション結果をcsvに出力
     if key == ord('f'):
-        save_file()
+        save_csv(df)
+        print(df)
 
     # ラベルを付与
     if flag:
         flag = False
         label_num = int(input())
-        # print("開始フレーム：", first)
-        # print("終了フレーム：", last)
         print("付与されたラベル：", label[label_num])
         action_label = label[label_num]
         # 開始フレームと終了フレームを初期化
@@ -98,14 +93,18 @@ while(cap.isOpened()):
         first = 0
         last = 0
 
-
     # フレームを戻す
     if key == ord('j'):
-        cap.set(cv2.CAP_PROP_POS_FRAMES, first)
         if fps-10 >=0:
             fps-=10
             first = 0
             last = 0
+        cap.set(cv2.CAP_PROP_POS_FRAMES, fps)
+
+    # フレームを進める
+    if key == ord('l'):
+        fps+=10
+        cap.set(cv2.CAP_PROP_POS_FRAMES, fps)
 
     fps += 1
 

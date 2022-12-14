@@ -6,3 +6,4 @@ bag_data/
 *.txt
 *.obj
 *.pth
+*.csv
