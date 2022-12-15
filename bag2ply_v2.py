@@ -6,12 +6,26 @@ from datetime import datetime
 import os
 from pytz import timezone
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # bagファイルを1フレームごとにplyとして出力する
 
 def my_makedirs(path):
     if not os.path.isdir(path):
         os.makedirs(path)
+
+df = pd.read_csv('eating1.csv',index_col = 0)
+list_dataset = df.to_numpy().tolist()
+action = df['action_label'].unique().tolist()
+action_num = [i for i in range(len(action))]
+label_enc = dict(zip(action,action_num))
+
+print(list_dataset[0][2])
+# 最初のラベルで初期化
+label = list_dataset[0]
+first_frame = label[0]
+last_frame = label[1]
+print(label[2])
 
 config = rs.config()
 bag_filename = 'D:/pointcloud/20221110/eating1.bag'
@@ -31,6 +45,7 @@ align = rs.align(align_to)
 
 try:
     num = 0
+    list_dataset_num = 0
     count =1
     while True:
         # フレーム待ち(Color & Depth)
@@ -54,46 +69,22 @@ try:
         rgbd = open3d.geometry.RGBDImage.create_from_color_and_depth(color, depth, depth_scale=10000.0, depth_trunc=10000,convert_rgb_to_intensity = False)
         pcd =  open3d.geometry.PointCloud.create_from_rgbd_image(rgbd, pinhole_camera_intrinsic)
 
-        utc_now = datetime.now(timezone('UTC'))
-        jst_now = utc_now.astimezone(timezone('Asia/Tokyo'))
-        ts = jst_now.strftime("%Y%m%d-%H%M%S")
-        date = ts[:8]
-        
+        print(num)
         # ディレクトリが無いときは作成する
-        my_makedirs("data/"+date)
-        
-        # open3d.io.write_point_cloud("data/"+date+"/"+ts+".ply", pcd)
-        if num %15 == 0:
-            open3d.io.write_point_cloud("data/"+date+"/data"+str(count)+".ply", pcd)
+        # my_makedirs("data/"+label[2])
+        if first_frame <= num and num <= last_frame:
+            if num == first_frame:
+                my_makedirs("data/"+str(label_enc[label[2]])+"/"+str(first_frame))
+
+            open3d.io.write_point_cloud("data/"+str(label_enc[label[2]])+"/"+str(first_frame)+'/'+str(count)+".ply", pcd)
             count+=1
-
+            print('ply作成')
+            if num == last_frame:
+                list_dataset_num+=1
+                label = list_dataset[list_dataset_num]
+                first_frame = label[0]
+                last_frame = label[1]
         num+=1
-
-        # Show images
-        # cv2.namedWindow('color_image', cv2.WINDOW_AUTOSIZE)
-        # cv2.imshow('color_image', color_image)
-        # cv2.namedWindow('depth_image', cv2.WINDOW_AUTOSIZE)
-        # cv2.imshow('depth_image', depth_image)
-        # cv2.waitKey(1)
-
-        # 確認用
-        # Show images
-        # plt.subplot(221)
-        # plt.title('rgbd.color image')
-        # plt.imshow(rgbd.color)
-        # plt.subplot(222)
-        # plt.title('rgbd.depth image')
-        # plt.imshow(rgbd.depth)
-        # plt.subplot(223)
-        # plt.title('depth_image')
-        # plt.imshow(depth)
-        # plt.subplot(224)
-        # plt.title('color_image')
-        # plt.imshow(color_image)
-        # plt.show()
-
-        if num == 301:
-            break
 
 finally:
     # Stop streaming
