@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 
 
 pcd = o3d.io.read_point_cloud("data/20221110/1.ply")
-# pcd = o3d.io.read_triangle_mesh("data/20221110/1.ply")
-# o3d.visualization.draw_geometries([pcd])
 
 print("Load a ply point cloud, print it, and render it")
 print(pcd)

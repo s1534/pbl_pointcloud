@@ -11,7 +11,7 @@ import glob
 # 外れ値除去
 # FPS
 
-files = glob.glob("data/20221116/*")
+files = glob.glob("data/eating1/cuisine-main_dish_eat/10669/*")
 
 def l2_norm(a, b):
     return ((a - b) ** 2).sum(axis=1)
@@ -56,7 +56,7 @@ def prepro(input_file):
     if np.unique(labels).size > 2:
         colors[labels < 1] = 0
     pcd.colors = o3d.utility.Vector3dVector(colors[:, :3])
-    # o3d.visualization.draw_geometries([pcd])
+    o3d.visualization.draw_geometries([pcd])
 
     # -------------------------人を切り出す-------------------------
     pcd_points = np.asarray(pcd.points)
