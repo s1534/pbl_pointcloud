@@ -2,8 +2,10 @@ import open3d as o3d
 import numpy as np
 import os
 import numpy as np
+from tqdm import tqdm
 
-action_dict = {'eat':'01','hold':'02','glab':'03','put':'04'}
+
+action_dict = {'eat':'01','hold':'02','grab':'03','put':'04'}
 object_dict = {'main-dish':'01','main-side-dish':'02','staple-dish':'03','tableware_hold':'04'}
 
 def my_makedirs(path):
@@ -21,6 +23,7 @@ def create_dataset(path,pcd_numpy,num):
     e = num.zfill(2)
     file_name = 'a'+action+'_o'+object+'_s'+s+'_e'+e
     np.savez('data/dataset/'+file_name,pcd_numpy)
+    print(file_name,'を保存しました')
 
 
 def l2_norm(a, b):
@@ -58,7 +61,7 @@ def read_dir():
         current_path = path+action_label+'/'
         tmp = os.listdir(current_path)
         i = 0
-        for each_action_dir in tmp:
+        for each_action_dir in tqdm(tmp):
             bottom_dir = current_path+each_action_dir
             # bottom_dirは2184とかのところ（.ply）の上の階層
             ply_path = os.listdir(bottom_dir)
@@ -66,13 +69,13 @@ def read_dir():
             j = 0
             for ply in ply_path:
                 pcd_dir = bottom_dir+'/'+ply
-                print(pcd_dir)
-                print(len(ply_path))
+                # print(pcd_dir)
+                # print(len(ply_path))
                 pcd = o3d.io.read_point_cloud(pcd_dir)
                 pcd = down_sampling(pcd)
-                print(pcd)
+                # print(pcd)
                 pcd,ind = pcd.remove_radius_outlier(nb_points=16, radius=2)
-                print(pcd)
+                # print(pcd)
                 xyz_load = np.asarray(pcd.points)
                 if j == 0:
                     pcd_concat_np = xyz_load
