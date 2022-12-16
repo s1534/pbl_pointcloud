@@ -15,7 +15,7 @@ def my_makedirs(path):
     if not os.path.isdir(path):
         os.makedirs(path)
 
-df = pd.read_csv('eating2.csv',index_col = 0)
+df = pd.read_csv('eating3.csv',index_col = 0)
 
 # ラベルの定義
 label_dict = {'料理-主食を掴む':'main-dish_grab',
@@ -43,7 +43,7 @@ last_frame = label[1]
 
 
 config = rs.config()
-bag_filename = 'D:/pointcloud/20221110/eating2.bag'
+bag_filename = 'D:/pointcloud/20221110/eating3.bag'
 
 # ↓ ここでファイル名設定
 config.enable_device_from_file(bag_filename)
@@ -105,9 +105,9 @@ try:
             pcd =  open3d.geometry.PointCloud.create_from_rgbd_image(rgbd, pinhole_camera_intrinsic)
 
             if num == first_frame:
-                my_makedirs("data/"+"eating2/"+label[2]+"/"+str(first_frame))
+                my_makedirs("data/"+"eating3/"+label[2]+"/"+str(first_frame))
 
-            open3d.io.write_point_cloud("data/"+"eating2/"+label[2]+"/"+str(first_frame)+'/'+str(count)+".ply", pcd)
+            open3d.io.write_point_cloud("data/"+"eating3/"+label[2]+"/"+str(first_frame)+'/'+str(count)+".ply", pcd)
             count+=1
             print('ply作成')
             if num == last_frame:

@@ -19,7 +19,7 @@ def create_dataset(path,pcd_numpy,num):
     action = action_dict[action]
     object = path[:sep_num]
     object = object_dict[object]
-    s = '02'
+    s = '03'
     e = num.zfill(2)
     file_name = 'a'+action+'_o'+object+'_s'+s+'_e'+e
     np.savez('data/dataset/'+file_name,pcd_numpy)
@@ -74,7 +74,13 @@ def read_dir():
                 pcd = o3d.io.read_point_cloud(pcd_dir)
                 pcd = down_sampling(pcd)
                 # print(pcd)
+
+                # プリミティブ除去
+                
+
+                # 外れ値除去
                 pcd,ind = pcd.remove_radius_outlier(nb_points=16, radius=2)
+                
                 # print(pcd)
                 xyz_load = np.asarray(pcd.points)
                 if j == 0:
