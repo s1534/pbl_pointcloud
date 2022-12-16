@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--visualize', action='store_true')
 args = parser.parse_args() 
 
-bag_filename = 'D:/pointcloud/20221110/eating1.bag'
+bag_filename = 'D:/pointcloud/20221110/eating3.bag'
 
 bagfiles = glob.glob(bag_filename)
 num_bags = len(bagfiles)
