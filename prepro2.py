@@ -19,7 +19,7 @@ def create_dataset(path,pcd_numpy,num):
     action = action_dict[action]
     object = path[:sep_num]
     object = object_dict[object]
-    s = '03'
+    s = '01'
     e = num.zfill(2)
     file_name = 'a'+action+'_o'+object+'_s'+s+'_e'+e
     np.savez('data/dataset/'+file_name,pcd_numpy)
@@ -52,7 +52,7 @@ def down_sampling(pcd):
 def read_dir():
     # カレントディレクトリを取得
     current_dir = os.getcwd()
-    path = current_dir+'/data/eating2/'
+    path = current_dir+'/data/eating1/'
     files = os.listdir(path)
     files_dir = [f for f in files if os.path.isdir(os.path.join(path, f))]
     print(files_dir)
@@ -73,10 +73,12 @@ def read_dir():
                 # print(len(ply_path))
                 pcd = o3d.io.read_point_cloud(pcd_dir)
                 pcd = down_sampling(pcd)
-                # print(pcd)
 
                 # プリミティブ除去
-                
+                plane_model,inliers = pcd.segment_plane(distance_threshold=0.0025,ransac_n=3,num_iterations=500)
+                # plane_cloud =pcd_clipping_human.select_by_index(inliers)
+                # plane_cloud.paint_uniform_color([1.0,0,0])
+                pcd =pcd.select_by_index(inliers,invert=True)
 
                 # 外れ値除去
                 pcd,ind = pcd.remove_radius_outlier(nb_points=16, radius=2)
@@ -88,6 +90,7 @@ def read_dir():
                 else:
                     pcd_concat_np = np.concatenate([pcd_concat_np,xyz_load])
                 j+=1
+                
             pcd = o3d.geometry.PointCloud()
             pcd.points = o3d.utility.Vector3dVector(pcd_concat_np)
             pcd = farthest_point_sampling(pcd,1024)
