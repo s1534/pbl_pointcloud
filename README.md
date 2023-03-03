@@ -9,8 +9,6 @@ python open3d_make_bag_file.py
 ```
 設定はconfig.jsonに記載
 
-## Hello
-hello mishima
 ## bagファイルから1フレームずつ点群データ(.ply)を生成
 ```
 python bag2ply.py
